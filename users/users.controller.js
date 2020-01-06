@@ -10,18 +10,18 @@ router.post('/reauthenticate', reauthenticate);     // public route
 router.get('/', authorize(Role.Admin), getAll); // admin only
 router.get('/:id', authorize(), getById);       // all authenticated users
 router.post('/logout', logout);       // all authenticated users
+router.post('/lock', lockEdit);
+router.post('/free', freeEdit);
 module.exports = router;
 
 function authenticate(req, res, next) {
     console.log("login")
     userService.authenticate(req.body)
         .then(user => {
-            if (user == "editorBlocked") {
-                res.status(400).json({ message: 'User Editor is currently in use' })
-            } else if (user) {
+            if (user) {
                 res.json(user)
             } else {
-                res.status(400).json({ message: 'Username or password is incorrect' })
+                res.status(401).json({ message: 'Username or password is incorrect' })
             }
         }//user ? res.json(user) : res.status(400).json({ message: 'Username or password is incorrect' })
         )
@@ -34,7 +34,7 @@ function reauthenticate(req, res, next) {
             if(user) {
                 res.json(user)
             } else {
-                res.status(400).json({ message: 'User not found or invalid token' })
+                res.status(403).json({ message: 'User not found or invalid token' })
             }
         })
         .catch(err => next(err));
@@ -48,6 +48,36 @@ function logout(req, res, next) {
                 res.json(result)
             }
         })
+        .catch(err => next(err));
+}
+
+function lockEdit(req, res, next) {
+    console.log("lockEdit")
+    userService.lockEdit(req.body)
+        .then(user => {
+            if (user.username) {
+                res.status(403).json({ message: 'Editing is currently blocked by ' + user.firstName + ' ' + user.lastName})
+            } else if (user) {
+                res.json(user)
+            } else {
+                res.status(403).json({ message: 'Unauthorized' })
+            }
+        }//user ? res.json(user) : res.status(400).json({ message: 'Username or password is incorrect' })
+        )
+        .catch(err => next(err));
+}
+
+function freeEdit(req, res, next) {
+    console.log("freeEdit")
+    userService.freeEdit(req.body)
+        .then(user => {
+            if (user) {
+                res.json(user)
+            } else {
+                res.status(401).json({ message: 'Unauthorized: Could not unlock editing' })
+            }
+        }//user ? res.json(user) : res.status(400).json({ message: 'Username or password is incorrect' })
+        )
         .catch(err => next(err));
 }
 

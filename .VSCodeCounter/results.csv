@@ -1,0 +1,12 @@
+filename, language, JSON, Markdown, JavaScript, comment, blank, total
+c:\Users\csand\Documents\GitHub\node-role-based-authorization-api\README.md, Markdown, 0, 11, 0, 0, 6, 17
+c:\Users\csand\Documents\GitHub\node-role-based-authorization-api\_helpers\authorize.js, JavaScript, 0, 0, 17, 6, 5, 28
+c:\Users\csand\Documents\GitHub\node-role-based-authorization-api\_helpers\error-handler.js, JavaScript, 0, 0, 10, 3, 3, 16
+c:\Users\csand\Documents\GitHub\node-role-based-authorization-api\_helpers\role.js, JavaScript, 0, 0, 5, 0, 0, 5
+c:\Users\csand\Documents\GitHub\node-role-based-authorization-api\config.json, JSON, 3, 0, 0, 0, 0, 3
+c:\Users\csand\Documents\GitHub\node-role-based-authorization-api\package-lock.json, JSON, 2988, 0, 0, 0, 1, 2989
+c:\Users\csand\Documents\GitHub\node-role-based-authorization-api\package.json, JSON, 24, 0, 0, 0, 1, 25
+c:\Users\csand\Documents\GitHub\node-role-based-authorization-api\server.js, JavaScript, 0, 0, 15, 3, 4, 22
+c:\Users\csand\Documents\GitHub\node-role-based-authorization-api\users\user.service.js, JavaScript, 0, 0, 131, 16, 19, 166
+c:\Users\csand\Documents\GitHub\node-role-based-authorization-api\users\users.controller.js, JavaScript, 0, 0, 90, 2, 10, 102
+Total, -, 3015, 11, 268, 30, 49, 3373

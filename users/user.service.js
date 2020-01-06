@@ -6,38 +6,46 @@ const Role = require('_helpers/role');
 const users = [
     { id: 1, username: 'admin', password: 'admin', firstName: 'Admin', lastName: 'User', role: Role.Admin },
     { id: 2, username: 'user', password: 'user', firstName: 'ViewOnly', lastName: 'User', role: Role.User },
-    { id: 3, username: 'editor', password: 'editor', firstName: 'Normal', lastName: 'User', role: Role.Editor }
+    { id: 3, username: 'editor', password: 'editor', firstName: 'Normal', lastName: 'User', role: Role.Editor },
+    { id: 4, username: 'csandkuhler', password: 'csandkuhler', firstName: 'Christian', lastName: 'Sandkuehler', role: Role.Editor },
+    { id: 5, username: 'acavlina', password: 'acavlina', firstName: 'Ante', lastName: 'Cavlina', role: Role.Editor }
 ];
 
 var loggedInUserToken = null;
 var editUserTimeout = null;
 const timeoutInMinutes = 2;
 
+//new vars
+var userLockingEdit = null;
+var editLockTimeout = null;
+const editLockTimeoutInMinutes = 1;
+
 module.exports = {
     authenticate,
     reauthenticate,
     getAll,
     getById,
-    logout
+    logout,
+    lockEdit,
+    freeEdit
 };
 
 async function authenticate({ username, password }) {
     const user = users.find(u => u.username === username && u.password === password);
     
     if (user) {
-        if (user.username == "editor" && loggedInUserToken) {
+        /*if (user.username == "editor" && loggedInUserToken) {
             console.log("editor logged in");
             return "editorBlocked";
-        }
+        }*/
         const token = jwt.sign({ sub: user.id, role: user.role, exp: Math.floor(Date.now() / 1000) + (60 * timeoutInMinutes) }, config.secret);
         const { password, ...userWithoutPassword } = user;
-        if (user.username == "editor") {
+        /*if (user.username == "editor") {
             loggedInUserToken = token;
             editUserTimeout = setTimeout(resetToken, timeoutInMinutes * 60000)
-        }        
+        }*/        
         return {
             ...userWithoutPassword,
-            timeoutInMinutes,
             token
         };
     }
@@ -54,14 +62,13 @@ async function reauthenticate(oldUser) {
         }        
         const token = jwt.sign({ sub: user.id, role: user.role, exp: Math.floor(Date.now() / 1000) + (60 * timeoutInMinutes) }, config.secret);
         const { password, ...userWithoutPassword } = user;
-        if (user.username == "editor" && loggedInUserToken) {
+        /*if (user.username == "editor" && loggedInUserToken) {
             clearTimeout(editUserTimeout);
             loggedInUserToken = token;
             editUserTimeout = setTimeout(resetToken, timeoutInMinutes * 60000)
-        }                
+        }*/                
         return {
             ...userWithoutPassword,
-            timeoutInMinutes,
             token
         };
     }
@@ -78,10 +85,58 @@ async function logout(oldUser) {
         } catch (error) {
             logIt(error)
         }        
-        if (user.username == "editor" && loggedInUserToken) {
-            clearTimeout(editUserTimeout);
-            loggedInUserToken = null;
+        if (userLockingEdit && user.role == Role.Editor && user.username == userLockingEdit.username) {
+            clearTimeout(editLockTimeout);
+            userLockingEdit = null;
+            //loggedInUserToken = null;
         }                
+        return true;
+    }
+    return false;
+}
+
+async function lockEdit(oldUser) {
+    const user = users.find(u => u.username === oldUser.username);
+    
+    if (user && user.role == Role.Editor) {
+        try {
+            jwt.verify(oldUser.token, config.secret)
+        } catch (error) {
+            logIt(error)
+        }  
+        if(userLockingEdit) {
+            if(userLockingEdit.username == user.username) {
+                clearTimeout(editLockTimeout);
+                editLockTimeout = setTimeout(resetEdit, editLockTimeoutInMinutes * 60000);
+                return true;
+            }
+            return userLockingEdit;            
+        } else {
+            const { password, ...userWithoutPassword } = user;
+            userLockingEdit = userWithoutPassword;
+            clearTimeout(editLockTimeout);
+            editLockTimeout = setTimeout(resetEdit, editLockTimeoutInMinutes * 60000);
+            return true;
+        }
+    }
+    return false;
+}
+
+function resetEdit() {
+    userLockingEdit = null;
+    clearTimeout(editLockTimeout);
+}
+
+async function freeEdit(oldUser) {
+    const user = users.find(u => u.username === oldUser.username);
+    
+    if (user && user.username == userLockingEdit.username) {
+        try {
+            jwt.verify(oldUser.token, config.secret)
+        } catch (error) {
+            logIt(error)
+        }  
+        resetEdit();
         return true;
     }
     return false;
