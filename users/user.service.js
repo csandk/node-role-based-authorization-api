@@ -98,7 +98,7 @@ async function logout(oldUser) {
 async function lockEdit(oldUser) {
     const user = users.find(u => u.username === oldUser.username);
     
-    if (user && user.role == Role.Editor) {
+    if (user && (user.role == Role.Editor || user.role == Role.Admin)) {
         try {
             jwt.verify(oldUser.token, config.secret)
         } catch (error) {

@@ -21,7 +21,7 @@ function authenticate(req, res, next) {
             if (user) {
                 res.json(user)
             } else {
-                res.status(401).json({ message: 'Username or password is incorrect' })
+                res.status(400).json({ message: 'Username or password is incorrect' })
             }
         }//user ? res.json(user) : res.status(400).json({ message: 'Username or password is incorrect' })
         )
@@ -56,11 +56,11 @@ function lockEdit(req, res, next) {
     userService.lockEdit(req.body)
         .then(user => {
             if (user.username) {
-                res.status(403).json({ message: 'Editing is currently blocked by ' + user.firstName + ' ' + user.lastName})
+                res.status(400).json({ message: 'Editing is currently blocked by ' + user.firstName + ' ' + user.lastName})
             } else if (user) {
                 res.json(user)
             } else {
-                res.status(403).json({ message: 'Unauthorized' })
+                res.status(400).json({ message: 'Unauthorized: You have no permission to edit'})
             }
         }//user ? res.json(user) : res.status(400).json({ message: 'Username or password is incorrect' })
         )
