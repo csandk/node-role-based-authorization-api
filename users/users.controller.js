@@ -15,7 +15,6 @@ router.post('/free', freeEdit);
 module.exports = router;
 
 function authenticate(req, res, next) {
-    console.log("login")
     userService.authenticate(req.body)
         .then(user => {
             if (user) {
@@ -23,7 +22,7 @@ function authenticate(req, res, next) {
             } else {
                 res.status(400).json({ message: 'Username or password is incorrect' })
             }
-        }//user ? res.json(user) : res.status(400).json({ message: 'Username or password is incorrect' })
+        }
         )
         .catch(err => next(err));
 }
@@ -34,14 +33,13 @@ function reauthenticate(req, res, next) {
             if(user) {
                 res.json(user)
             } else {
-                res.status(403).json({ message: 'User not found or invalid token' })
+                res.status(400).json({ message: 'User not found or invalid token' })
             }
         })
         .catch(err => next(err));
 }
 
 function logout(req, res, next) {
-    console.log("logout")
     userService.logout(req.body)
         .then(result => {
             if(result) {
@@ -52,7 +50,6 @@ function logout(req, res, next) {
 }
 
 function lockEdit(req, res, next) {
-    console.log("lockEdit")
     userService.lockEdit(req.body)
         .then(user => {
             if (user.username) {
@@ -62,21 +59,20 @@ function lockEdit(req, res, next) {
             } else {
                 res.status(400).json({ message: 'Unauthorized: You have no permission to edit'})
             }
-        }//user ? res.json(user) : res.status(400).json({ message: 'Username or password is incorrect' })
+        }
         )
         .catch(err => next(err));
 }
 
 function freeEdit(req, res, next) {
-    console.log("freeEdit")
     userService.freeEdit(req.body)
         .then(user => {
             if (user) {
                 res.json(user)
             } else {
-                res.status(401).json({ message: 'Unauthorized: Could not unlock editing' })
+                res.status(400).json({ message: 'Unauthorized: Could not unlock editing' })
             }
-        }//user ? res.json(user) : res.status(400).json({ message: 'Username or password is incorrect' })
+        }
         )
         .catch(err => next(err));
 }
@@ -93,7 +89,7 @@ function getById(req, res, next) {
 
     // only allow admins to access other user records
     if (id !== currentUser.sub && currentUser.role !== Role.Admin) {
-        return res.status(401).json({ message: 'Unauthorized' });
+        return res.status(400).json({ message: 'Unauthorized' });
     }
 
     userService.getById(req.params.id)

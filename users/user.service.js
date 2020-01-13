@@ -34,16 +34,8 @@ async function authenticate({ username, password }) {
     const user = users.find(u => u.username === username && u.password === password);
     
     if (user) {
-        /*if (user.username == "editor" && loggedInUserToken) {
-            console.log("editor logged in");
-            return "editorBlocked";
-        }*/
         const token = jwt.sign({ sub: user.id, role: user.role, exp: Math.floor(Date.now() / 1000) + (60 * timeoutInMinutes) }, config.secret);
-        const { password, ...userWithoutPassword } = user;
-        /*if (user.username == "editor") {
-            loggedInUserToken = token;
-            editUserTimeout = setTimeout(resetToken, timeoutInMinutes * 60000)
-        }*/        
+        const { password, ...userWithoutPassword } = user;     
         return {
             ...userWithoutPassword,
             token
@@ -58,15 +50,9 @@ async function reauthenticate(oldUser) {
         try {
             jwt.verify(oldUser.token, config.secret)
         } catch (error) {
-            logIt(error)
         }        
         const token = jwt.sign({ sub: user.id, role: user.role, exp: Math.floor(Date.now() / 1000) + (60 * timeoutInMinutes) }, config.secret);
-        const { password, ...userWithoutPassword } = user;
-        /*if (user.username == "editor" && loggedInUserToken) {
-            clearTimeout(editUserTimeout);
-            loggedInUserToken = token;
-            editUserTimeout = setTimeout(resetToken, timeoutInMinutes * 60000)
-        }*/                
+        const { password, ...userWithoutPassword } = user;            
         return {
             ...userWithoutPassword,
             token
@@ -78,17 +64,13 @@ async function logout(oldUser) {
     const user = users.find(u => u.username === oldUser.username);
     
     if (user) {
-        logIt("foundUserToLogout");
         try {
             jwt.verify(oldUser.token, config.secret)
-            logIt("verified")
         } catch (error) {
-            logIt(error)
         }        
         if (userLockingEdit && user.role == Role.Editor && user.username == userLockingEdit.username) {
             clearTimeout(editLockTimeout);
             userLockingEdit = null;
-            //loggedInUserToken = null;
         }                
         return true;
     }
@@ -102,7 +84,6 @@ async function lockEdit(oldUser) {
         try {
             jwt.verify(oldUser.token, config.secret)
         } catch (error) {
-            logIt(error)
         }  
         if(userLockingEdit) {
             if(userLockingEdit.username == user.username) {
@@ -134,7 +115,6 @@ async function freeEdit(oldUser) {
         try {
             jwt.verify(oldUser.token, config.secret)
         } catch (error) {
-            logIt(error)
         }  
         resetEdit();
         return true;
@@ -148,7 +128,6 @@ function logIt(word) {
 
 function resetToken() {
     loggedInUserToken = null;
-    console.log("reset Token")
 }
 
 async function getAll() {
