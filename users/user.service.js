@@ -4,18 +4,9 @@ const Role = require('_helpers/role');
 
 // users hardcoded for simplicity, store in a db for production applications
 const users = [
-    //{ id: 1, username: 'admin', password: 'admin', firstName: 'Admin', lastName: 'User', role: Role.Admin },
+    { id: 1, username: 'admin', password: 'admin', firstName: 'Admin', lastName: 'User', role: Role.Admin },
     { id: 2, username: 'user', password: 'user', firstName: 'ViewOnly', lastName: 'User', role: Role.User },
-    { id: 3, username: 'editor', password: 'editor', firstName: 'Normal', lastName: 'User', role: Role.Editor },
-    { id: 4, username: 'csandkuhler', password: 'csandkuhler', firstName: 'Christian', lastName: 'Sandkuehler', role: Role.Admin },
-    { id: 5, username: 'acavlina', password: 'acavlina', firstName: 'Ante', lastName: 'Cavlina', role: Role.Editor },
-    { id: 6, username: 'mneumann', password: 'mneumann', firstName: 'Marko', lastName: 'Neumann', role: Role.Editor },
-    { id: 7, username: 'jschleef', password: 'jschleef', firstName: 'Juergen', lastName: 'Schleef', role: Role.Editor },
-    { id: 8, username: 'bkoos', password: 'bkoos', firstName: 'Bjoern', lastName: 'Koos', role: Role.Editor },
-    { id: 9, username: 'bott', password: 'bott', firstName: 'Bjoern', lastName: 'Ott', role: Role.Editor },
-    { id: 10, username: 'riordache', password: 'riordache', firstName: 'Raluca', lastName: 'Iordache', role: Role.Editor },
-    { id: 11, username: 'tbiel', password: 'tbiel', firstName: 'Thomas', lastName: 'Biel', role: Role.Editor },
-    { id: 12, username: 'lfockele', password: 'lfockele', firstName: 'Lars', lastName: 'Fockele', role: Role.Editor }
+    { id: 3, username: 'editor', password: 'editor', firstName: 'Normal', lastName: 'User', role: Role.Editor }
 ];
 
 var loggedInUserToken = null;
